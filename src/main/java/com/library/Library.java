@@ -1,4 +1,5 @@
 package com.library;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -21,6 +22,10 @@ public class Library {
         books = new ArrayList<>();
         users = new ArrayList<>();
         borrowedBooksMap = new HashMap<>();
+    }
+
+    public ArrayList<Book> getBooks() {
+        return books;
     }
 
     // Add a new book to the library

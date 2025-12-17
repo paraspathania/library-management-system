@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Library Management System</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        h1 { color: #333; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .available { color: green; font-weight: bold; }
+        .borrowed { color: red; font-weight: bold; }
+        .form-container { background: #f9f9f9; padding: 20px; border-radius: 8px; margin-bottom: 30px; }
+        input[type=text], input[type=number] { padding: 10px; margin: 5px; width: 200px; }
+        button { padding: 10px 20px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #45a049; }
+        a { text-decoration: none; padding: 5px 10px; border-radius: 4px; }
+        .btn-borrow { background-color: #008CBA; color: white; }
+        .btn-return { background-color: #f44336; color: white; }
+    </style>
+</head>
+<body>
+
+    <h1>📚 Library Management System</h1>
+
+    <div class="form-container">
+        <h3>Add New Book</h3>
+        <form th:action="@{/add-book}" th:object="${newBook}" method="post">
+            <input type="number" th:field="*{bookID}" placeholder="Book ID" required />
+            <input type="text" th:field="*{title}" placeholder="Title" required />
+            <input type="text" th:field="*{author}" placeholder="Author" required />
+            <button type="submit">Add Book</button>
+        </form>
+    </div>
+
+    <h3>Book Inventory</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="book : ${books}">
+                <td th:text="${book.bookID}">1</td>
+                <td th:text="${book.title}">Title</td>
+                <td th:text="${book.author}">Author</td>
+                <td>
+                    <span th:if="${book.isBorrowed}" class="borrowed">Borrowed</span>
+                    <span th:unless="${book.isBorrowed}" class="available">Available</span>
+                </td>
+                <td>
+                    <a th:if="${!book.isBorrowed}" th:href="@{/borrow/{id}(id=${book.bookID})}" class="btn-borrow">Borrow</a>
+                    <a th:if="${book.isBorrowed}" th:href="@{/return/{id}(id=${book.bookID})}" class="btn-return">Return</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>
