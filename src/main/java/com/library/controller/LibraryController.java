@@ -46,4 +46,10 @@ public class LibraryController {
         library.returnBook(1, id);
         return "redirect:/";
     }
+
+    @GetMapping("/delete/{id}")
+    public String deleteBook(@PathVariable int id) {
+        library.removeBook(id);
+        return "redirect:/";
+    }
 }
