@@ -3,159 +3,276 @@
 
 <head>
     <title>Library Management</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            --primary-color: #4f46e5;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+        }
 
         body {
             font-family: 'Poppins', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
+            color: #1f2937;
             min-height: 100vh;
             margin: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
         h1 {
             color: white;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            margin-bottom: 30px;
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 40px;
+            text-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            animation: fadeInDown 0.8s ease-out;
         }
 
-        /* Glassmorphism Container */
-        .glass-container {
-            background: rgba(255, 255, 255, 0.25);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.18);
+        /* Glassmorphism Generic Class */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            box-shadow: var(--glass-shadow);
+        }
+
+        /* Search/Add Form Section */
+        .action-bar {
             padding: 30px;
-            width: 80%;
-            max-width: 900px;
-            margin-bottom: 20px;
+            margin-bottom: 50px;
+            animation: fadeInUp 0.8s ease-out 0.2s backwards;
+            text-align: center;
         }
 
         .form-group {
             display: flex;
-            gap: 10px;
+            gap: 15px;
             justify-content: center;
-            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
         input {
-            padding: 12px;
-            border-radius: 25px;
+            padding: 15px 25px;
+            border-radius: 50px;
             border: none;
             outline: none;
-            width: 200px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            width: 250px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
         }
 
         button.add-btn {
-            padding: 12px 25px;
-            border-radius: 25px;
+            padding: 15px 40px;
+            border-radius: 50px;
             border: none;
-            background: #4caf50;
-            /* Green */
+            background: linear-gradient(to right, #10b981, #059669);
             color: white;
-            cursor: pointer;
             font-weight: 600;
-            transition: transform 0.2s, background 0.2s;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+            transition: all 0.3s ease;
         }
 
         button.add-btn:hover {
-            transform: scale(1.05);
-            background: #45a049;
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.6);
         }
 
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 10px;
-            margin-top: 10px;
+        /* Grid Layout for Cards */
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 10px;
         }
 
-        th {
-            text-align: left;
-            padding: 15px;
-            color: white;
-            font-weight: 600;
+        /* Book Card */
+        .book-card {
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.85);
+            /* Less transparent for readability */
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            animation: scaleIn 0.5s ease-out backwards;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        td {
-            background: rgba(255, 255, 255, 0.8);
-            padding: 15px;
+        /* Staggered Animation Delay loop would be complex in pure CSS without preprocessor loop or JS, 
+           so we just use a default animation */
+
+        .book-card:hover {
+            transform: translateY(-10px) rotate(1deg);
+            background: white;
+            border-color: white;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            z-index: 10;
         }
 
-        tr td:first-child {
-            border-top-left-radius: 10px;
-            border-bottom-left-radius: 10px;
+        .book-id {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 0.8rem;
+            color: #9ca3af;
+            font-weight: 500;
         }
 
-        tr td:last-child {
-            border-top-right-radius: 10px;
-            border-bottom-right-radius: 10px;
+        .book-title {
+            font-size: 1.5rem;
+            margin: 20px 0 10px 0;
+            color: #111827;
+            font-weight: 700;
+            line-height: 1.3;
         }
 
-        tr {
-            transition: transform 0.2s;
+        .book-author {
+            color: #6b7280;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            font-style: italic;
         }
 
-        tr:hover {
-            transform: scale(1.01);
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            padding-top: 15px;
         }
 
         .status-badge {
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 0.9em;
-            font-weight: 600;
-        }
-
-        .available {
-            background: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .borrowed {
-            background: #ffebee;
-            color: #c62828;
-        }
-
-        .action-btn {
-            text-decoration: none;
-            padding: 8px 16px;
+            padding: 6px 12px;
             border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-available {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-borrowed {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+
+        .btn-action-borrow {
+            background: #e0f2fe;
+            color: #0284c7;
+        }
+
+        .btn-action-borrow:hover {
+            background: #0284c7;
             color: white;
-            font-size: 0.9em;
-            margin-right: 5px;
-            transition: opacity 0.2s;
-            display: inline-block;
         }
 
-        .action-btn:hover {
-            opacity: 0.9;
+        .btn-action-return {
+            background: #ffedd5;
+            color: #c2410c;
         }
 
-        .btn-borrow {
-            background: #2196f3;
+        .btn-action-return:hover {
+            background: #c2410c;
+            color: white;
         }
 
-        .btn-return {
-            background: #ff9800;
+        .btn-action-delete {
+            background: #fce7f3;
+            color: #db2777;
         }
 
-        .btn-delete {
-            background: #f44336;
+        .btn-action-delete:hover {
+            background: #db2777;
+            color: white;
+        }
+
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
         }
     </style>
     <script>
         function confirmDelete(id) {
-            if (confirm("Are you sure you want to delete this book?")) {
+            if (confirm("Are you sure you want to remove this book from the library?")) {
                 window.location.href = "/delete/" + id;
             }
         }
@@ -164,50 +281,47 @@
 
 <body>
 
-    <h1>✨ Library Management System</h1>
+    <div class="container">
+        <h1>✨ Library Management</h1>
 
-    <!-- Add Book Section -->
-    <div class="glass-container">
-        <form th:action="@{/add-book}" th:object="${newBook}" method="post" class="form-group">
-            <input type="number" th:field="*{bookID}" placeholder="Book ID" required autocomplete="off" />
-            <input type="text" th:field="*{title}" placeholder="Title" required autocomplete="off" />
-            <input type="text" th:field="*{author}" placeholder="Author" required autocomplete="off" />
-            <button type="submit" class="add-btn">Add Book</button>
-        </form>
-    </div>
+        <!-- Add Book Section -->
+        <div class="glass action-bar">
+            <form th:action="@{/add-book}" th:object="${newBook}" method="post" class="form-group">
+                <input type="number" th:field="*{bookID}" placeholder="ISBN / ID" required autocomplete="off" />
+                <input type="text" th:field="*{title}" placeholder="Book Title" required autocomplete="off" />
+                <input type="text" th:field="*{author}" placeholder="Author Name" required autocomplete="off" />
+                <button type="submit" class="add-btn">+ Add Books</button>
+            </form>
+        </div>
 
-    <!-- Book List Section -->
-    <div class="glass-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Title</th>
-                    <th>Author</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="book : ${books}">
-                    <td th:text="${book.bookID}">1001</td>
-                    <td th:text="${book.title}">Harry Potter</td>
-                    <td th:text="${book.author}">J.K. Rowling</td>
-                    <td>
-                        <span th:if="${book.isBorrowed}" class="status-badge borrowed">Borrowed</span>
-                        <span th:unless="${book.isBorrowed}" class="status-badge available">Available</span>
-                    </td>
-                    <td>
+        <!-- Book Grid Section -->
+        <div class="books-grid">
+            <div th:each="book : ${books}" class="glass book-card">
+
+                <span class="book-id" th:text="'#' + ${book.bookID}">#1001</span>
+
+                <div>
+                    <div class="book-title" th:text="${book.title}">Harry Potter</div>
+                    <div class="book-author" th:text="'by ' + ${book.author}">by J.K. Rowling</div>
+                </div>
+
+                <div class="card-footer">
+                    <!-- Status -->
+                    <span th:if="${book.isBorrowed}" class="status-badge status-borrowed">Borrowed</span>
+                    <span th:unless="${book.isBorrowed}" class="status-badge status-available">Available</span>
+
+                    <!-- Actions -->
+                    <div class="actions">
                         <a th:if="${!book.isBorrowed}" th:href="@{/borrow/{id}(id=${book.bookID})}"
-                            class="action-btn btn-borrow">Borrow</a>
+                            class="icon-btn btn-action-borrow" title="Borrow">📥</a>
                         <a th:if="${book.isBorrowed}" th:href="@{/return/{id}(id=${book.bookID})}"
-                            class="action-btn btn-return">Return</a>
+                            class="icon-btn btn-action-return" title="Return">📤</a>
                         <a href="javascript:void(0);" th:onclick="'confirmDelete(' + ${book.bookID} + ')'"
-                            class="action-btn btn-delete">Delete</a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                            class="icon-btn btn-action-delete" title="Delete">🗑️</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
 </body>
